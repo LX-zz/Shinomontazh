@@ -1,7 +1,7 @@
 package ru.mirea.shinomontazh;
 
 import ru.mirea.shinomontazh.model.Client;
-import ru.mirea.shinomontazh.repository.ClientRepository;
+import ru.mirea.shinomontazh.service.ClientService;
 import java.util.List;
 
 
@@ -9,11 +9,11 @@ public class Main {
     public static void main(String[]args) {
         System.out.println("Система шиномонтажа запущена");
 
-        ClientRepository clientRepository = new ClientRepository();
-    
+        ClientService clientService = new ClientService();
+
         try {
 
-            List<Client> clients = clientRepository.findAll();
+            List<Client> clients = clientService.getAllClients();
 
             System.out.println("Список клиентов:");
 
