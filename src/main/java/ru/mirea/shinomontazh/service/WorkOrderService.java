@@ -80,6 +80,74 @@ public class WorkOrderService {
         return repository.delete(id);
     }
 
+    public List<WorkOrder> searchByCarBrand(String carBrand) throws Exception {
+
+        if (carBrand == null || carBrand.isBlank()) {
+            throw new BusinessException(
+                    "Марка автомобиля не может быть пустой."
+            );
+        }
+
+        return repository.searchByCarBrand(carBrand);
+    }
+
+    public List<WorkOrder> searchByCarNumber(String carNumber) throws Exception {
+
+        if (carNumber == null || carNumber.isBlank()) {
+            throw new BusinessException(
+                    "Госномер не может быть пустым."
+            );
+        }
+
+        return repository.searchByCarNumber(carNumber);
+    }
+
+    public List<WorkOrder> filterByStatus(OrderStatus status) throws Exception {
+
+        return repository.getAll()
+                .stream()
+                .filter(order -> order.getStatus() == status)
+                .toList();
+    }
+
+    public List<WorkOrder> filterByClientId(int clientId) throws Exception {
+
+        if (clientId <= 0) {
+            throw new BusinessException(
+                    "ID клиента должен быть больше 0."
+            );
+        }
+
+        if (!repository.clientExists(clientId)) {
+            throw new BusinessException(
+                    "Клиент с ID " + clientId + " не существует."
+            );
+        }
+
+        return repository.getAll()
+                .stream()
+                .filter(order -> order.getClientId() == clientId)
+                .toList();
+    }
+
+    public List<WorkOrder> sortByPrice() throws Exception {
+
+        return repository.getAll()
+                .stream()
+                .sorted((order1, order2) ->
+                        order1.getPrice().compareTo(order2.getPrice()))
+                .toList();
+    }
+
+    public List<WorkOrder> sortByDate() throws Exception {
+
+        return repository.getAll()
+                .stream()
+                .sorted((order1, order2) ->
+                        order1.getCreateDate().compareTo(order2.getCreateDate()))
+                .toList();
+    }
+
     private void validateOrder(WorkOrder order) throws Exception {
 
         if (order.getCarBrand() == null
@@ -167,52 +235,4 @@ public class WorkOrderService {
             );
         }
     }
-    public List<WorkOrder> searchByCarBrand(String carBrand) throws Exception {
-
-    if (carBrand == null || carBrand.isBlank()) {
-        throw new BusinessException(
-                "Марка автомобиля не может быть пустой."
-        );
-    }
-
-    return repository.searchByCarBrand(carBrand);
-}
-
-public List<WorkOrder> searchByCarNumber(String carNumber) throws Exception {
-
-    if (carNumber == null || carNumber.isBlank()) {
-        throw new BusinessException(
-                "Госномер не может быть пустым."
-        );
-    }
-
-    return repository.searchByCarNumber(carNumber);
-}
-public List<WorkOrder> filterByStatus(OrderStatus status) throws Exception {
-
-    return repository.getAll()
-            .stream()
-            .filter(order -> order.getStatus() == status)
-            .toList();
-}
-
-public List<WorkOrder> filterByClientId(int clientId) throws Exception {
-
-    if (clientId <= 0) {
-        throw new BusinessException(
-                "ID клиента должен быть больше 0."
-        );
-    }
-
-    if (!repository.clientExists(clientId)) {
-        throw new BusinessException(
-                "Клиент с ID " + clientId + " не существует."
-        );
-    }
-
-    return repository.getAll()
-            .stream()
-            .filter(order -> order.getClientId() == clientId)
-            .toList();
-}
 }

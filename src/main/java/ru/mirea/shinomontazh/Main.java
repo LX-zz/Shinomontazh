@@ -27,6 +27,7 @@ public class Main {
             System.out.println("5. Удалить заказ");
             System.out.println("6. Поиск заказов");
             System.out.println("7. Фильтрация заказов");
+            System.out.println("8. Сортировка заказов");
             System.out.println("0. Выход");
 
             System.out.print("Выберите действие: ");
@@ -61,6 +62,10 @@ public class Main {
 
                 case "7":
                     filterOrders();
+                    break;
+
+                case "8":
+                    sortOrders();
                     break;
 
                 case "0":
@@ -321,6 +326,69 @@ public class Main {
 
             List<WorkOrder> orders =
                     service.filterByClientId(clientId);
+
+            printOrders(orders);
+
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private static void sortOrders() {
+
+        boolean sortMenu = true;
+
+        while (sortMenu) {
+
+            System.out.println();
+            System.out.println("1. Сортировка по цене");
+            System.out.println("2. Сортировка по дате создания");
+            System.out.println("0. Назад");
+
+            System.out.print("Выберите действие: ");
+
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+
+                case "1":
+                    sortByPrice();
+                    break;
+
+                case "2":
+                    sortByDate();
+                    break;
+
+                case "0":
+                    sortMenu = false;
+                    break;
+
+                default:
+                    System.out.println("Такого пункта меню нет.");
+            }
+        }
+    }
+
+    private static void sortByPrice() {
+
+        try {
+
+            List<WorkOrder> orders =
+                    service.sortByPrice();
+
+            printOrders(orders);
+
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private static void sortByDate() {
+
+        try {
+
+            List<WorkOrder> orders =
+                    service.sortByDate();
 
             printOrders(orders);
 
