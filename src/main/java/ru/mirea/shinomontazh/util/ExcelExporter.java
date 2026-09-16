@@ -9,9 +9,10 @@ import ru.mirea.shinomontazh.model.WorkOrder;
 import java.io.FileOutputStream;
 import java.util.List;
 
-public class ExcelExporter {
+public class ExcelExporter implements DataExporter {
 
-    public static void exportOrders(
+    @Override
+    public void export(
             List<WorkOrder> orders,
             String fileName
     ) throws Exception {
@@ -68,8 +69,10 @@ public class ExcelExporter {
                 sheet.autoSizeColumn(i);
             }
 
-            try (FileOutputStream outputStream =
-                         new FileOutputStream(fileName)) {
+            try (
+                    FileOutputStream outputStream =
+                            new FileOutputStream(fileName)
+            ) {
 
                 workbook.write(outputStream);
             }
