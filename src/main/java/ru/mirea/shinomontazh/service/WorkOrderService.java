@@ -188,4 +188,31 @@ public List<WorkOrder> searchByCarNumber(String carNumber) throws Exception {
 
     return repository.searchByCarNumber(carNumber);
 }
+public List<WorkOrder> filterByStatus(OrderStatus status) throws Exception {
+
+    return repository.getAll()
+            .stream()
+            .filter(order -> order.getStatus() == status)
+            .toList();
+}
+
+public List<WorkOrder> filterByClientId(int clientId) throws Exception {
+
+    if (clientId <= 0) {
+        throw new BusinessException(
+                "ID клиента должен быть больше 0."
+        );
+    }
+
+    if (!repository.clientExists(clientId)) {
+        throw new BusinessException(
+                "Клиент с ID " + clientId + " не существует."
+        );
+    }
+
+    return repository.getAll()
+            .stream()
+            .filter(order -> order.getClientId() == clientId)
+            .toList();
+}
 }

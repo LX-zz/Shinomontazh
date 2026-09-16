@@ -26,6 +26,7 @@ public class Main {
             System.out.println("4. Изменить заказ");
             System.out.println("5. Удалить заказ");
             System.out.println("6. Поиск заказов");
+            System.out.println("7. Фильтрация заказов");
             System.out.println("0. Выход");
 
             System.out.print("Выберите действие: ");
@@ -56,6 +57,10 @@ public class Main {
 
                 case "6":
                     searchOrders();
+                    break;
+
+                case "7":
+                    filterOrders();
                     break;
 
                 case "0":
@@ -247,6 +252,75 @@ public class Main {
 
             List<WorkOrder> orders =
                     service.searchByCarNumber(carNumber);
+
+            printOrders(orders);
+
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private static void filterOrders() {
+
+        boolean filterMenu = true;
+
+        while (filterMenu) {
+
+            System.out.println();
+            System.out.println("1. Фильтр по статусу");
+            System.out.println("2. Фильтр по клиенту");
+            System.out.println("0. Назад");
+
+            System.out.print("Выберите действие: ");
+
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+
+                case "1":
+                    filterByStatus();
+                    break;
+
+                case "2":
+                    filterByClient();
+                    break;
+
+                case "0":
+                    filterMenu = false;
+                    break;
+
+                default:
+                    System.out.println("Такого пункта меню нет.");
+            }
+        }
+    }
+
+    private static void filterByStatus() {
+
+        try {
+
+            System.out.println("Выберите статус:");
+
+            OrderStatus status = readStatus();
+
+            List<WorkOrder> orders =
+                    service.filterByStatus(status);
+
+            printOrders(orders);
+
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private static void filterByClient() {
+
+        int clientId = readInt("Введите ID клиента: ");
+
+        try {
+
+            List<WorkOrder> orders =
+                    service.filterByClientId(clientId);
 
             printOrders(orders);
 
