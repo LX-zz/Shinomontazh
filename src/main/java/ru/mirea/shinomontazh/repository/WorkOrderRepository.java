@@ -31,10 +31,7 @@ public class WorkOrderRepository {
                 order.setId(resultSet.getInt("id"));
                 order.setCarBrand(resultSet.getString("car_brand"));
                 order.setCarNumber(resultSet.getString("car_number"));
-
-                order.setServiceName(
-                        resultSet.getString("service_type")
-                );
+                order.setServiceName(resultSet.getString("service_type"));
 
                 order.setStatus(
                         OrderStatus.valueOf(
@@ -42,9 +39,7 @@ public class WorkOrderRepository {
                         )
                 );
 
-                order.setPrice(
-                        resultSet.getBigDecimal("price")
-                );
+                order.setPrice(resultSet.getBigDecimal("price"));
 
                 order.setCreateDate(
                         resultSet.getTimestamp("create_date")
@@ -60,5 +55,52 @@ public class WorkOrderRepository {
         }
 
         return orders;
+    }
+
+    public WorkOrder getById(int id) throws Exception {
+
+        String sql = "SELECT * FROM orders WHERE id = ?";
+
+        try (
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+
+            statement.setInt(1, id);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+
+                    WorkOrder order = new WorkOrder();
+
+                    order.setId(resultSet.getInt("id"));
+                    order.setCarBrand(resultSet.getString("car_brand"));
+                    order.setCarNumber(resultSet.getString("car_number"));
+                    order.setServiceName(resultSet.getString("service_type"));
+
+                    order.setStatus(
+                            OrderStatus.valueOf(
+                                    resultSet.getString("status")
+                            )
+                    );
+
+                    order.setPrice(resultSet.getBigDecimal("price"));
+
+                    order.setCreateDate(
+                            resultSet.getTimestamp("create_date")
+                                    .toLocalDateTime()
+                    );
+
+                    order.setClientId(
+                            resultSet.getInt("client_id")
+                    );
+
+                    return order;
+                }
+            }
+        }
+
+        return null;
     }
 }
