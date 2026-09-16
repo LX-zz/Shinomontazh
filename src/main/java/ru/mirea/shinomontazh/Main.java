@@ -28,6 +28,7 @@ public class Main {
             System.out.println("6. Поиск заказов");
             System.out.println("7. Фильтрация заказов");
             System.out.println("8. Сортировка заказов");
+            System.out.println("9. Статистика");
             System.out.println("0. Выход");
 
             System.out.print("Выберите действие: ");
@@ -66,6 +67,10 @@ public class Main {
 
                 case "8":
                     sortOrders();
+                    break;
+
+                case "9":
+                    showStatistics();
                     break;
 
                 case "0":
@@ -394,6 +399,65 @@ public class Main {
 
         } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private static void showStatistics() {
+
+        try {
+
+            long total =
+                    service.getTotalOrders();
+
+            long newOrders =
+                    service.countByStatus(OrderStatus.NEW);
+
+            long inProgress =
+                    service.countByStatus(OrderStatus.IN_PROGRESS);
+
+            long done =
+                    service.countByStatus(OrderStatus.DONE);
+
+            long cancelled =
+                    service.countByStatus(OrderStatus.CANCELLED);
+
+            BigDecimal totalPrice =
+                    service.getTotalPrice();
+
+            System.out.println();
+            System.out.println("Статистика:");
+
+            System.out.println(
+                    "Всего заказов: " + total
+            );
+
+            System.out.println(
+                    "Новых заказов: " + newOrders
+            );
+
+            System.out.println(
+                    "Заказов в работе: " + inProgress
+            );
+
+            System.out.println(
+                    "Выполненных заказов: " + done
+            );
+
+            System.out.println(
+                    "Отмененных заказов: " + cancelled
+            );
+
+            System.out.println(
+                    "Общая стоимость заказов: "
+                            + totalPrice
+                            + " руб."
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Ошибка: " + e.getMessage()
+            );
         }
     }
 

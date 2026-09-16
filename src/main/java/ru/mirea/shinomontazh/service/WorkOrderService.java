@@ -148,6 +148,27 @@ public class WorkOrderService {
                 .toList();
     }
 
+    public long getTotalOrders() throws Exception {
+
+        return repository.getAll().size();
+    }
+
+    public long countByStatus(OrderStatus status) throws Exception {
+
+        return repository.getAll()
+                .stream()
+                .filter(order -> order.getStatus() == status)
+                .count();
+    }
+
+    public BigDecimal getTotalPrice() throws Exception {
+
+        return repository.getAll()
+                .stream()
+                .map(WorkOrder::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
     private void validateOrder(WorkOrder order) throws Exception {
 
         if (order.getCarBrand() == null
