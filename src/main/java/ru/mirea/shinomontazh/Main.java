@@ -29,6 +29,7 @@ public class Main {
             System.out.println("7. Фильтрация заказов");
             System.out.println("8. Сортировка заказов");
             System.out.println("9. Статистика");
+            System.out.println("10. Экспорт в Excel");
             System.out.println("0. Выход");
 
             System.out.print("Выберите действие: ");
@@ -71,6 +72,10 @@ public class Main {
 
                 case "9":
                     showStatistics();
+                    break;
+
+                case "10":
+                    exportToExcel();
                     break;
 
                 case "0":
@@ -457,6 +462,28 @@ public class Main {
 
             System.out.println(
                     "Ошибка: " + e.getMessage()
+            );
+        }
+    }
+
+    private static void exportToExcel() {
+
+        try {
+
+            String fileName = "orders.xlsx";
+
+            service.exportToExcel(fileName);
+
+            System.out.println(
+                    "Данные экспортированы в файл: "
+                            + fileName
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Ошибка экспорта: "
+                            + e.getMessage()
             );
         }
     }

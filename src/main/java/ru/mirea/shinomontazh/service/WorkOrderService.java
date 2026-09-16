@@ -5,6 +5,7 @@ import ru.mirea.shinomontazh.exception.EntityNotFoundException;
 import ru.mirea.shinomontazh.model.OrderStatus;
 import ru.mirea.shinomontazh.model.WorkOrder;
 import ru.mirea.shinomontazh.repository.WorkOrderRepository;
+import ru.mirea.shinomontazh.util.ExcelExporter;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -167,6 +168,16 @@ public class WorkOrderService {
                 .stream()
                 .map(WorkOrder::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void exportToExcel(String fileName) throws Exception {
+
+        List<WorkOrder> orders = repository.getAll();
+
+        ExcelExporter.exportOrders(
+                orders,
+                fileName
+        );
     }
 
     private void validateOrder(WorkOrder order) throws Exception {
