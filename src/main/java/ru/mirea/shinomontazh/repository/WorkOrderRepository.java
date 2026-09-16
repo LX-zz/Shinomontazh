@@ -179,4 +179,20 @@ public class WorkOrderRepository {
         return deletedRows > 0;
     }
 }
+public boolean clientExists(int clientId) throws Exception {
+
+    String sql = "SELECT 1 FROM clients WHERE id = ?";
+
+    try (
+            Connection connection = DatabaseManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)
+    ) {
+
+        statement.setInt(1, clientId);
+
+        try (ResultSet resultSet = statement.executeQuery()) {
+            return resultSet.next();
+        }
+    }
+}
 }

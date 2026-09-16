@@ -1,45 +1,272 @@
 package ru.mirea.shinomontazh;
 
+import ru.mirea.shinomontazh.model.OrderStatus;
 import ru.mirea.shinomontazh.model.WorkOrder;
-import ru.mirea.shinomontazh.repository.WorkOrderRepository;
+import ru.mirea.shinomontazh.service.WorkOrderService;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final WorkOrderService service = new WorkOrderService();
+
     public static void main(String[] args) {
 
-        WorkOrderRepository repository = new WorkOrderRepository();
+        boolean work = true;
+
+        while (work) {
+
+            System.out.println();
+            System.out.println("1. Показать все заказы");
+            System.out.println("2. Найти заказ по ID");
+            System.out.println("3. Создать заказ");
+            System.out.println("4. Изменить заказ");
+            System.out.println("5. Удалить заказ");
+            System.out.println("0. Выход");
+
+            System.out.print("Выберите действие: ");
+
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+
+                case "1":
+                    showAllOrders();
+                    break;
+
+                case "2":
+                    findOrderById();
+                    break;
+
+                case "3":
+                    createOrder();
+                    break;
+
+                case "4":
+                    updateOrder();
+                    break;
+
+                case "5":
+                    deleteOrder();
+                    break;
+
+                case "0":
+                    work = false;
+                    System.out.println("Программа завершена.");
+                    break;
+
+                default:
+                    System.out.println("Такого пункта меню нет.");
+            }
+        }
+    }
+
+    private static void showAllOrders() {
 
         try {
 
-            WorkOrder order = repository.getById(11);
+            List<WorkOrder> orders = service.getAllOrders();
 
-            if (order == null) {
-                System.out.println("Заказ не найден");
+            if (orders.isEmpty()) {
+                System.out.println("Заказов нет.");
                 return;
             }
 
-            System.out.println("Удаляем заказ:");
-            System.out.println(order);
-
-            boolean deleted = repository.delete(11);
-
-            if (deleted) {
-                System.out.println();
-                System.out.println("Заказ успешно удален!");
-            } else {
-                System.out.println("Не удалось удалить заказ");
-            }
-
-            WorkOrder checkOrder = repository.getById(11);
-
-            if (checkOrder == null) {
-                System.out.println("Проверка: заказа №11 больше нет в базе.");
+            for (WorkOrder order : orders) {
+                System.out.println(order);
             }
 
         } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
 
-            System.out.println("Ошибка:");
-            System.out.println(e.getMessage());
+    private static void findOrderById() {
+
+        int id = readInt("Введите ID заказа: ");
+
+        try {
+
+            WorkOrder order = service.getOrderById(id);
+
+            if (order == null) {
+                System.out.println("Заказ не найден.");
+            } else {
+                System.out.println(order);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private static void createOrder() {
+
+        try {
+
+            WorkOrder order = new WorkOrder();
+
+            System.out.print("Марка автомобиля: ");
+            order.setCarBrand(scanner.nextLine());
+
+            System.out.print("Госномер автомобиля: ");
+            order.setCarNumber(scanner.nextLine());
+
+            System.out.print("Название услуги: ");
+            order.setServiceName(scanner.nextLine());
+
+            OrderStatus status = readStatus();
+            order.setStatus(status);
+
+            BigDecimal price = readPrice();
+            order.setPrice(price);
+
+            int clientId = readInt("ID клиента: ");
+            order.setClientId(clientId);
+
+            int newId = service.createOrder(order);
+
+            System.out.println("Заказ создан.");
+            System.out.println("ID нового заказа: " + newId);
+
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private static void updateOrder() {
+
+        int id = readInt("Введите ID заказа: ");
+
+        try {
+
+            WorkOrder order = service.getOrderById(id);
+
+            if (order == null) {
+                System.out.println("Заказ не найден.");
+                return;
+            }
+
+            System.out.println("Текущий заказ:");
+            System.out.println(order);
+
+            System.out.println();
+            System.out.println("Введите новый статус:");
+
+            OrderStatus status = readStatus();
+            order.setStatus(status);
+
+            BigDecimal price = readPrice();
+            order.setPrice(price);
+
+            boolean updated = service.updateOrder(order);
+
+            if (updated) {
+                System.out.println("Заказ изменен.");
+            } else {
+                System.out.println("Не удалось изменить заказ.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private static void deleteOrder() {
+
+        int id = readInt("Введите ID заказа: ");
+
+        try {
+
+            WorkOrder order = service.getOrderById(id);
+
+            if (order == null) {
+                System.out.println("Заказ не найден.");
+                return;
+            }
+
+            System.out.println("Удаляется заказ:");
+            System.out.println(order);
+
+            boolean deleted = service.deleteOrder(id);
+
+            if (deleted) {
+                System.out.println("Заказ удален.");
+            } else {
+                System.out.println("Не удалось удалить заказ.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private static int readInt(String message) {
+
+        while (true) {
+
+            System.out.print(message);
+
+            String input = scanner.nextLine();
+
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Ошибка: необходимо ввести целое число.");
+            }
+        }
+    }
+
+    private static BigDecimal readPrice() {
+
+        while (true) {
+
+            System.out.print("Цена: ");
+
+            String input = scanner.nextLine();
+
+            try {
+                return new BigDecimal(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Ошибка: цена должна быть числом.");
+            }
+        }
+    }
+
+    private static OrderStatus readStatus() {
+
+        while (true) {
+
+            System.out.println("Доступные статусы:");
+            System.out.println("1. NEW");
+            System.out.println("2. IN_PROGRESS");
+            System.out.println("3. DONE");
+            System.out.println("4. CANCELLED");
+
+            System.out.print("Выберите статус: ");
+
+            String status = scanner.nextLine();
+
+            switch (status) {
+
+                case "1":
+                    return OrderStatus.NEW;
+
+                case "2":
+                    return OrderStatus.IN_PROGRESS;
+
+                case "3":
+                    return OrderStatus.DONE;
+
+                case "4":
+                    return OrderStatus.CANCELLED;
+
+                default:
+                    System.out.println("Некорректный статус.");
+            }
         }
     }
 }
