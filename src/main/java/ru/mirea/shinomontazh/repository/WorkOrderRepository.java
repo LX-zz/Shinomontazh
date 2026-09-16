@@ -46,9 +46,7 @@ public class WorkOrderRepository {
                                 .toLocalDateTime()
                 );
 
-                order.setClientId(
-                        resultSet.getInt("client_id")
-                );
+                order.setClientId(resultSet.getInt("client_id"));
 
                 orders.add(order);
             }
@@ -92,9 +90,7 @@ public class WorkOrderRepository {
                                     .toLocalDateTime()
                     );
 
-                    order.setClientId(
-                            resultSet.getInt("client_id")
-                    );
+                    order.setClientId(resultSet.getInt("client_id"));
 
                     return order;
                 }
@@ -102,5 +98,37 @@ public class WorkOrderRepository {
         }
 
         return null;
+    }
+
+    public int create(WorkOrder order) throws Exception {
+
+        String sql = """
+                INSERT INTO orders
+                (car_brand, car_number, service_type, status, price, client_id)
+                VALUES (?, ?, ?, ?, ?, ?)
+                RETURNING id
+                """;
+
+        try (
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(1, order.getCarBrand());
+            statement.setString(2, order.getCarNumber());
+            statement.setString(3, order.getServiceName());
+            statement.setString(4, order.getStatus().name());
+            statement.setBigDecimal(5, order.getPrice());
+            statement.setInt(6, order.getClientId());
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    return resultSet.getInt("id");
+                }
+            }
+        }
+
+        return -1;
     }
 }

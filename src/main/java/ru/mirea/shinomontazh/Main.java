@@ -74,8 +74,11 @@
 
 package ru.mirea.shinomontazh;
 
+import ru.mirea.shinomontazh.model.OrderStatus;
 import ru.mirea.shinomontazh.model.WorkOrder;
 import ru.mirea.shinomontazh.repository.WorkOrderRepository;
+
+import java.math.BigDecimal;
 
 public class Main {
 
@@ -85,14 +88,24 @@ public class Main {
 
         try {
 
-            WorkOrder order = repository.getById(6);
+            WorkOrder order = new WorkOrder();
 
-            if (order != null) {
-                System.out.println("Заказ найден:");
-                System.out.println(order);
-            } else {
-                System.out.println("Заказ не найден");
-            }
+            order.setCarBrand("Mercedes C200");
+            order.setCarNumber("Т777ЕЕ77");
+            order.setServiceName("Замена шин");
+            order.setStatus(OrderStatus.NEW);
+            order.setPrice(new BigDecimal("3500"));
+            order.setClientId(1);
+
+            int newId = repository.create(order);
+
+            System.out.println("Заказ успешно создан!");
+            System.out.println("ID нового заказа: " + newId);
+
+            WorkOrder createdOrder = repository.getById(newId);
+
+            System.out.println("Созданный заказ:");
+            System.out.println(createdOrder);
 
         } catch (Exception e) {
 
