@@ -167,4 +167,25 @@ public class WorkOrderService {
             );
         }
     }
+    public List<WorkOrder> searchByCarBrand(String carBrand) throws Exception {
+
+    if (carBrand == null || carBrand.isBlank()) {
+        throw new BusinessException(
+                "Марка автомобиля не может быть пустой."
+        );
+    }
+
+    return repository.searchByCarBrand(carBrand);
+}
+
+public List<WorkOrder> searchByCarNumber(String carNumber) throws Exception {
+
+    if (carNumber == null || carNumber.isBlank()) {
+        throw new BusinessException(
+                "Госномер не может быть пустым."
+        );
+    }
+
+    return repository.searchByCarNumber(carNumber);
+}
 }

@@ -195,4 +195,107 @@ public boolean clientExists(int clientId) throws Exception {
         }
     }
 }
+public List<WorkOrder> searchByCarBrand(String carBrand) throws Exception {
+
+    List<WorkOrder> orders = new ArrayList<>();
+
+    String sql = """
+            SELECT *
+            FROM orders
+            WHERE LOWER(car_brand) LIKE LOWER(?)
+            ORDER BY id
+            """;
+
+    try (
+            Connection connection = DatabaseManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)
+    ) {
+
+        statement.setString(1, "%" + carBrand + "%");
+
+        try (ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+
+                WorkOrder order = new WorkOrder();
+
+                order.setId(resultSet.getInt("id"));
+                order.setCarBrand(resultSet.getString("car_brand"));
+                order.setCarNumber(resultSet.getString("car_number"));
+                order.setServiceName(resultSet.getString("service_type"));
+
+                order.setStatus(
+                        OrderStatus.valueOf(
+                                resultSet.getString("status")
+                        )
+                );
+
+                order.setPrice(resultSet.getBigDecimal("price"));
+
+                order.setCreateDate(
+                        resultSet.getTimestamp("create_date")
+                                .toLocalDateTime()
+                );
+
+                order.setClientId(resultSet.getInt("client_id"));
+
+                orders.add(order);
+            }
+        }
+    }
+
+    return orders;
+}
+
+public List<WorkOrder> searchByCarNumber(String carNumber) throws Exception {
+
+    List<WorkOrder> orders = new ArrayList<>();
+
+    String sql = """
+            SELECT *
+            FROM orders
+            WHERE LOWER(car_number) LIKE LOWER(?)
+            ORDER BY id
+            """;
+
+    try (
+            Connection connection = DatabaseManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)
+    ) {
+
+        statement.setString(1, "%" + carNumber + "%");
+
+        try (ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+
+                WorkOrder order = new WorkOrder();
+
+                order.setId(resultSet.getInt("id"));
+                order.setCarBrand(resultSet.getString("car_brand"));
+                order.setCarNumber(resultSet.getString("car_number"));
+                order.setServiceName(resultSet.getString("service_type"));
+
+                order.setStatus(
+                        OrderStatus.valueOf(
+                                resultSet.getString("status")
+                        )
+                );
+
+                order.setPrice(resultSet.getBigDecimal("price"));
+
+                order.setCreateDate(
+                        resultSet.getTimestamp("create_date")
+                                .toLocalDateTime()
+                );
+
+                order.setClientId(resultSet.getInt("client_id"));
+
+                orders.add(order);
+            }
+        }
+    }
+
+    return orders;
+}
 }

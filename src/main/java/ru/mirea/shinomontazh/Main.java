@@ -25,6 +25,7 @@ public class Main {
             System.out.println("3. Создать заказ");
             System.out.println("4. Изменить заказ");
             System.out.println("5. Удалить заказ");
+            System.out.println("6. Поиск заказов");
             System.out.println("0. Выход");
 
             System.out.print("Выберите действие: ");
@@ -53,6 +54,10 @@ public class Main {
                     deleteOrder();
                     break;
 
+                case "6":
+                    searchOrders();
+                    break;
+
                 case "0":
                     work = false;
                     System.out.println("Программа завершена.");
@@ -70,14 +75,7 @@ public class Main {
 
             List<WorkOrder> orders = service.getAllOrders();
 
-            if (orders.isEmpty()) {
-                System.out.println("Заказов нет.");
-                return;
-            }
-
-            for (WorkOrder order : orders) {
-                System.out.println(order);
-            }
+            printOrders(orders);
 
         } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
@@ -92,11 +90,7 @@ public class Main {
 
             WorkOrder order = service.getOrderById(id);
 
-            if (order == null) {
-                System.out.println("Заказ не найден.");
-            } else {
-                System.out.println(order);
-            }
+            System.out.println(order);
 
         } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
@@ -118,11 +112,9 @@ public class Main {
             System.out.print("Название услуги: ");
             order.setServiceName(scanner.nextLine());
 
-            OrderStatus status = readStatus();
-            order.setStatus(status);
+            order.setStatus(readStatus());
 
-            BigDecimal price = readPrice();
-            order.setPrice(price);
+            order.setPrice(readPrice());
 
             int clientId = readInt("ID клиента: ");
             order.setClientId(clientId);
@@ -145,22 +137,15 @@ public class Main {
 
             WorkOrder order = service.getOrderById(id);
 
-            if (order == null) {
-                System.out.println("Заказ не найден.");
-                return;
-            }
-
             System.out.println("Текущий заказ:");
             System.out.println(order);
 
             System.out.println();
             System.out.println("Введите новый статус:");
 
-            OrderStatus status = readStatus();
-            order.setStatus(status);
+            order.setStatus(readStatus());
 
-            BigDecimal price = readPrice();
-            order.setPrice(price);
+            order.setPrice(readPrice());
 
             boolean updated = service.updateOrder(order);
 
@@ -183,11 +168,6 @@ public class Main {
 
             WorkOrder order = service.getOrderById(id);
 
-            if (order == null) {
-                System.out.println("Заказ не найден.");
-                return;
-            }
-
             System.out.println("Удаляется заказ:");
             System.out.println(order);
 
@@ -204,6 +184,89 @@ public class Main {
         }
     }
 
+    private static void searchOrders() {
+
+        boolean searchMenu = true;
+
+        while (searchMenu) {
+
+            System.out.println();
+            System.out.println("1. Поиск по марке автомобиля");
+            System.out.println("2. Поиск по госномеру");
+            System.out.println("0. Назад");
+
+            System.out.print("Выберите действие: ");
+
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+
+                case "1":
+                    searchByCarBrand();
+                    break;
+
+                case "2":
+                    searchByCarNumber();
+                    break;
+
+                case "0":
+                    searchMenu = false;
+                    break;
+
+                default:
+                    System.out.println("Такого пункта меню нет.");
+            }
+        }
+    }
+
+    private static void searchByCarBrand() {
+
+        System.out.print("Введите марку автомобиля: ");
+
+        String carBrand = scanner.nextLine();
+
+        try {
+
+            List<WorkOrder> orders =
+                    service.searchByCarBrand(carBrand);
+
+            printOrders(orders);
+
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private static void searchByCarNumber() {
+
+        System.out.print("Введите госномер автомобиля: ");
+
+        String carNumber = scanner.nextLine();
+
+        try {
+
+            List<WorkOrder> orders =
+                    service.searchByCarNumber(carNumber);
+
+            printOrders(orders);
+
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private static void printOrders(List<WorkOrder> orders) {
+
+        if (orders.isEmpty()) {
+            System.out.println("Заказы не найдены.");
+            return;
+        }
+
+        for (WorkOrder order : orders) {
+            System.out.println(order);
+        }
+    }
+
     private static int readInt(String message) {
 
         while (true) {
@@ -215,7 +278,9 @@ public class Main {
             try {
                 return Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.out.println("Ошибка: необходимо ввести целое число.");
+                System.out.println(
+                        "Ошибка: необходимо ввести целое число."
+                );
             }
         }
     }
@@ -231,7 +296,9 @@ public class Main {
             try {
                 return new BigDecimal(input);
             } catch (NumberFormatException e) {
-                System.out.println("Ошибка: цена должна быть числом.");
+                System.out.println(
+                        "Ошибка: цена должна быть числом."
+                );
             }
         }
     }
