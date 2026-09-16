@@ -131,4 +131,52 @@ public class WorkOrderRepository {
 
         return -1;
     }
+
+    public boolean update(WorkOrder order) throws Exception {
+
+        String sql = """
+                UPDATE orders
+                SET car_brand = ?,
+                    car_number = ?,
+                    service_type = ?,
+                    status = ?,
+                    price = ?,
+                    client_id = ?
+                WHERE id = ?
+                """;
+
+        try (
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(1, order.getCarBrand());
+            statement.setString(2, order.getCarNumber());
+            statement.setString(3, order.getServiceName());
+            statement.setString(4, order.getStatus().name());
+            statement.setBigDecimal(5, order.getPrice());
+            statement.setInt(6, order.getClientId());
+            statement.setInt(7, order.getId());
+
+            int updatedRows = statement.executeUpdate();
+
+            return updatedRows > 0;
+        }
+    }
+    public boolean delete(int id) throws Exception {
+
+    String sql = "DELETE FROM orders WHERE id = ?";
+
+    try (
+            Connection connection = DatabaseManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)
+    ) {
+
+        statement.setInt(1, id);
+
+        int deletedRows = statement.executeUpdate();
+
+        return deletedRows > 0;
+    }
+}
 }
