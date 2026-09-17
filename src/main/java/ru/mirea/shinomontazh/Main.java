@@ -109,6 +109,10 @@ public class Main {
 
             System.out.println();
             System.out.println("1. Показать всех клиентов");
+            System.out.println("2. Найти клиента по ID");
+            System.out.println("3. Создать клиента");
+            System.out.println("4. Изменить клиента");
+            System.out.println("5. Удалить клиента");
             System.out.println("0. Назад");
 
             System.out.print("Выберите действие: ");
@@ -119,6 +123,22 @@ public class Main {
 
                 case "1":
                     showAllClients();
+                    break;
+
+                case "2":
+                    findClientById();
+                    break;
+
+                case "3":
+                    createClient();
+                    break;
+
+                case "4":
+                    updateClient();
+                    break;
+
+                case "5":
+                    deleteClient();
                     break;
 
                 case "0":
@@ -149,14 +169,125 @@ public class Main {
 
             for (Client client : clients) {
 
+                printClient(client);
+            }
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Ошибка: " + e.getMessage()
+            );
+        }
+    }
+
+    private static void findClientById() {
+
+        int id = readInt(
+                "Введите ID клиента: "
+        );
+
+        try {
+
+            Client client =
+                    clientService.getClientById(id);
+
+            printClient(client);
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Ошибка: " + e.getMessage()
+            );
+        }
+    }
+
+    private static void createClient() {
+
+        try {
+
+            Client client = new Client();
+
+            System.out.print("ФИО клиента: ");
+            client.setFullName(
+                    scanner.nextLine()
+            );
+
+            System.out.print("Телефон: ");
+            client.setPhone(
+                    scanner.nextLine()
+            );
+
+            System.out.print("Email: ");
+            client.setEmail(
+                    scanner.nextLine()
+            );
+
+            int newId =
+                    clientService.createClient(client);
+
+            System.out.println(
+                    "Клиент создан."
+            );
+
+            System.out.println(
+                    "ID нового клиента: " + newId
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Ошибка: " + e.getMessage()
+            );
+        }
+    }
+
+    private static void updateClient() {
+
+        int id = readInt(
+                "Введите ID клиента: "
+        );
+
+        try {
+
+            Client client =
+                    clientService.getClientById(id);
+
+            System.out.println(
+                    "Текущие данные клиента:"
+            );
+
+            printClient(client);
+
+            System.out.println();
+
+            System.out.print("Новое ФИО: ");
+            client.setFullName(
+                    scanner.nextLine()
+            );
+
+            System.out.print("Новый телефон: ");
+            client.setPhone(
+                    scanner.nextLine()
+            );
+
+            System.out.print("Новый email: ");
+            client.setEmail(
+                    scanner.nextLine()
+            );
+
+            boolean updated =
+                    clientService.updateClient(client);
+
+            if (updated) {
+
                 System.out.println(
-                        client.getId()
-                                + " | "
-                                + client.getFullName()
-                                + " | "
-                                + client.getPhone()
-                                + " | "
-                                + client.getEmail()
+                        "Клиент изменен."
+                );
+
+            } else {
+
+                System.out.println(
+                        "Не удалось изменить клиента."
                 );
             }
 
@@ -166,6 +297,83 @@ public class Main {
                     "Ошибка: " + e.getMessage()
             );
         }
+    }
+
+    private static void deleteClient() {
+
+        int id = readInt(
+                "Введите ID клиента: "
+        );
+
+        try {
+
+            Client client =
+                    clientService.getClientById(id);
+
+            System.out.println(
+                    "Удаляется клиент:"
+            );
+
+            printClient(client);
+
+            System.out.println();
+            System.out.println(
+                    "Внимание: связанные заказы тоже будут удалены."
+            );
+
+            System.out.print(
+                    "Введите YES для подтверждения: "
+            );
+
+            String answer =
+                    scanner.nextLine();
+
+            if (!answer.equalsIgnoreCase("YES")) {
+
+                System.out.println(
+                        "Удаление отменено."
+                );
+
+                return;
+            }
+
+            boolean deleted =
+                    clientService.deleteClient(id);
+
+            if (deleted) {
+
+                System.out.println(
+                        "Клиент удален."
+                );
+
+            } else {
+
+                System.out.println(
+                        "Не удалось удалить клиента."
+                );
+            }
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Ошибка: " + e.getMessage()
+            );
+        }
+    }
+
+    private static void printClient(
+            Client client
+    ) {
+
+        System.out.println(
+                client.getId()
+                        + " | "
+                        + client.getFullName()
+                        + " | "
+                        + client.getPhone()
+                        + " | "
+                        + client.getEmail()
+        );
     }
 
     private static void showAllOrders() {
@@ -244,10 +452,7 @@ public class Main {
                     readPrice()
             );
 
-            System.out.println();
-            System.out.println(
-                    "Перед вводом ID клиента можно посмотреть список клиентов через пункт 1 главного меню."
-            );
+            showAllClients();
 
             int clientId = readInt(
                     "ID клиента: "
@@ -381,9 +586,11 @@ public class Main {
             System.out.println(
                     "1. Поиск по марке автомобиля"
             );
+
             System.out.println(
                     "2. Поиск по госномеру"
             );
+
             System.out.println(
                     "0. Назад"
             );
@@ -479,9 +686,11 @@ public class Main {
             System.out.println(
                     "1. Фильтр по статусу"
             );
+
             System.out.println(
                     "2. Фильтр по клиенту"
             );
+
             System.out.println(
                     "0. Назад"
             );
@@ -543,6 +752,8 @@ public class Main {
 
     private static void filterByClient() {
 
+        showAllClients();
+
         int clientId = readInt(
                 "Введите ID клиента: "
         );
@@ -574,9 +785,11 @@ public class Main {
             System.out.println(
                     "1. Сортировка по цене"
             );
+
             System.out.println(
                     "2. Сортировка по дате создания"
             );
+
             System.out.println(
                     "0. Назад"
             );
