@@ -201,8 +201,7 @@ public List<WorkOrder> searchByCarBrand(String carBrand) throws Exception {
 
     String sql = """
             SELECT *
-            FROM orders
-            WHERE LOWER(car_brand) LIKE LOWER(?)
+            FROM orders WHERE LOWER(car_brand) LIKE LOWER(?)
             ORDER BY id
             """;
 
@@ -216,14 +215,11 @@ public List<WorkOrder> searchByCarBrand(String carBrand) throws Exception {
         try (ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-
                 WorkOrder order = new WorkOrder();
-
                 order.setId(resultSet.getInt("id"));
                 order.setCarBrand(resultSet.getString("car_brand"));
                 order.setCarNumber(resultSet.getString("car_number"));
                 order.setServiceName(resultSet.getString("service_type"));
-
                 order.setStatus(
                         OrderStatus.valueOf(
                                 resultSet.getString("status")
@@ -236,7 +232,6 @@ public List<WorkOrder> searchByCarBrand(String carBrand) throws Exception {
                         resultSet.getTimestamp("create_date")
                                 .toLocalDateTime()
                 );
-
                 order.setClientId(resultSet.getInt("client_id"));
 
                 orders.add(order);
@@ -252,8 +247,7 @@ public List<WorkOrder> searchByCarNumber(String carNumber) throws Exception {
     List<WorkOrder> orders = new ArrayList<>();
 
     String sql = """
-            SELECT *
-            FROM orders
+            SELECT * FROM orders
             WHERE LOWER(car_number) LIKE LOWER(?)
             ORDER BY id
             """;
@@ -268,9 +262,7 @@ public List<WorkOrder> searchByCarNumber(String carNumber) throws Exception {
         try (ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-
                 WorkOrder order = new WorkOrder();
-
                 order.setId(resultSet.getInt("id"));
                 order.setCarBrand(resultSet.getString("car_brand"));
                 order.setCarNumber(resultSet.getString("car_number"));
