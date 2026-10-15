@@ -8,54 +8,368 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.mirea</groupId>
-    <artifactId>shinomontazh</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>shinomontazh-javafx</artifactId>
+    <version>1.0.0</version>
+    <name>Shinomontazh JavaFX</name>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>25</maven.compiler.release>
+
+        <project.build.sourceEncoding>
+            UTF-8
+        </project.build.sourceEncoding>
+
+        <maven.compiler.release>
+            21
+        </maven.compiler.release>
+
+        <javafx.version>
+            21.0.8
+        </javafx.version>
+
+        <postgresql.version>
+            42.7.13
+        </postgresql.version>
+
+        <junit.version>
+            5.13.4
+        </junit.version>
+
     </properties>
+
 
     <dependencies>
 
-        <!-- PostgreSQL JDBC -->
+        <!-- =============================== -->
+        <!-- JavaFX                         -->
+        <!-- =============================== -->
+
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.7.13</version>
+
+            <groupId>
+                org.openjfx
+            </groupId>
+
+            <artifactId>
+                javafx-controls
+            </artifactId>
+
+            <version>
+                ${javafx.version}
+            </version>
+
         </dependency>
 
-        <!-- Excel .xlsx -->
+
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>5.4.1</version>
+
+            <groupId>
+                org.openjfx
+            </groupId>
+
+            <artifactId>
+                javafx-fxml
+            </artifactId>
+
+            <version>
+                ${javafx.version}
+            </version>
+
+        </dependency>
+
+
+        <!-- =============================== -->
+        <!-- PostgreSQL JDBC                -->
+        <!-- =============================== -->
+
+        <dependency>
+
+            <groupId>
+                org.postgresql
+            </groupId>
+
+            <artifactId>
+                postgresql
+            </artifactId>
+
+            <version>
+                ${postgresql.version}
+            </version>
+
+        </dependency>
+
+
+        <!-- =============================== -->
+        <!-- Excel                          -->
+        <!-- =============================== -->
+
+        <dependency>
+
+            <groupId>
+                org.apache.poi
+            </groupId>
+
+            <artifactId>
+                poi-ooxml
+            </artifactId>
+
+            <version>
+                5.4.1
+            </version>
+
+        </dependency>
+
+
+        <!-- =============================== -->
+        <!-- Logging                        -->
+        <!-- =============================== -->
+
+        <dependency>
+
+            <groupId>
+                org.slf4j
+            </groupId>
+
+            <artifactId>
+                slf4j-api
+            </artifactId>
+
+            <version>
+                2.0.17
+            </version>
+
+        </dependency>
+
+
+        <dependency>
+
+            <groupId>
+                org.slf4j
+            </groupId>
+
+            <artifactId>
+                slf4j-simple
+            </artifactId>
+
+            <version>
+                2.0.17
+            </version>
+
+            <scope>
+                runtime
+            </scope>
+
+        </dependency>
+
+
+        <!-- =============================== -->
+        <!-- Tests                          -->
+        <!-- =============================== -->
+
+        <dependency>
+
+            <groupId>
+                org.junit.jupiter
+            </groupId>
+
+            <artifactId>
+                junit-jupiter
+            </artifactId>
+
+            <version>
+                ${junit.version}
+            </version>
+
+            <scope>
+                test
+            </scope>
+
         </dependency>
 
     </dependencies>
 
+
     <build>
+
         <plugins>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.0</version>
-                <configuration>
-                    <release>${maven.compiler.release}</release>
-                </configuration>
-            </plugin>
+            <!-- =========================== -->
+            <!-- Java Compiler              -->
+            <!-- =========================== -->
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.4</version>
+
+                <groupId>
+                    org.apache.maven.plugins
+                </groupId>
+
+                <artifactId>
+                    maven-compiler-plugin
+                </artifactId>
+
+                <version>
+                    3.14.0
+                </version>
+
                 <configuration>
-                    <mainClass>ru.mirea.shinomontazh.Main</mainClass>
+
+                    <release>
+                        ${maven.compiler.release}
+                    </release>
+
+                    <parameters>
+                        true
+                    </parameters>
+
                 </configuration>
+
+            </plugin>
+
+
+            <!-- =========================== -->
+            <!-- Resources                  -->
+            <!-- =========================== -->
+
+            <plugin>
+
+                <groupId>
+                    org.apache.maven.plugins
+                </groupId>
+
+                <artifactId>
+                    maven-resources-plugin
+                </artifactId>
+
+                <version>
+                    3.5.0
+                </version>
+
+                <configuration>
+
+                    <encoding>
+                        UTF-8
+                    </encoding>
+
+                </configuration>
+
+            </plugin>
+
+
+            <!-- =========================== -->
+            <!-- Tests                      -->
+            <!-- =========================== -->
+
+            <plugin>
+
+                <groupId>
+                    org.apache.maven.plugins
+                </groupId>
+
+                <artifactId>
+                    maven-surefire-plugin
+                </artifactId>
+
+                <version>
+                    3.5.3
+                </version>
+
+                <configuration>
+
+                    <useModulePath>
+                        false
+                    </useModulePath>
+
+                </configuration>
+
+            </plugin>
+
+
+            <!-- =========================== -->
+            <!-- JavaFX                     -->
+            <!-- =========================== -->
+
+            <plugin>
+
+                <groupId>
+                    org.openjfx
+                </groupId>
+
+                <artifactId>
+                    javafx-maven-plugin
+                </artifactId>
+
+                <version>
+                    0.0.8
+                </version>
+
+                <configuration>
+
+                    <mainClass>
+                        ru.mirea.shinomontazh.app.ShinomontazhApplication
+                    </mainClass>
+
+                    <launcher>
+                        shinomontazh
+                    </launcher>
+
+                    <jlinkZipName>
+                        shinomontazh-javafx
+                    </jlinkZipName>
+
+                    <jlinkImageName>
+                        shinomontazh-javafx
+                    </jlinkImageName>
+
+                    <noManPages>
+                        true
+                    </noManPages>
+
+                    <stripDebug>
+                        true
+                    </stripDebug>
+
+                </configuration>
+
+            </plugin>
+
+
+            <!-- =========================== -->
+            <!-- JAR                        -->
+            <!-- =========================== -->
+
+            <plugin>
+
+                <groupId>
+                    org.apache.maven.plugins
+                </groupId>
+
+                <artifactId>
+                    maven-jar-plugin
+                </artifactId>
+
+                <version>
+                    3.4.2
+                </version>
+
+                <configuration>
+
+                    <archive>
+
+                        <manifest>
+
+                            <mainClass>
+                                ru.mirea.shinomontazh.app.ShinomontazhApplication
+                            </mainClass>
+
+                        </manifest>
+
+                    </archive>
+
+                </configuration>
+
             </plugin>
 
         </plugins>
+
     </build>
 
 </project>

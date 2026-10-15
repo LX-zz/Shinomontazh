@@ -1,7 +1,6 @@
 package ru.mirea.shinomontazh.model;
 
 public class Client {
-
     private int id;
     private String fullName;
     private String phone;

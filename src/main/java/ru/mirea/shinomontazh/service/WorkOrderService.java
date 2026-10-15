@@ -21,9 +21,17 @@ public class WorkOrderService {
         exporter = new ExcelExporter();
     }
 
+    // =====================================================
+    // ПОЛУЧИТЬ ВСЕ ЗАКАЗЫ
+    // =====================================================
+
     public List<WorkOrder> getAllOrders() throws Exception {
         return repository.getAll();
     }
+
+    // =====================================================
+    // ПОЛУЧИТЬ ЗАКАЗ ПО ID
+    // =====================================================
 
     public WorkOrder getOrderById(int id) throws Exception {
 
@@ -33,31 +41,57 @@ public class WorkOrderService {
             );
         }
 
-        WorkOrder order = repository.getById(id);
+        WorkOrder order =
+                repository.getById(id);
 
         if (order == null) {
             throw new EntityNotFoundException(
-                    "Заказ с ID " + id + " не найден."
+                    "Заказ с ID "
+                            + id
+                            + " не найден."
             );
         }
 
         return order;
     }
 
-    public int createOrder(WorkOrder order) throws Exception {
+    // =====================================================
+    // СОЗДАТЬ ЗАКАЗ
+    // =====================================================
+
+    public int createOrder(
+            WorkOrder order
+    ) throws Exception {
 
         validateOrder(order);
 
         return repository.create(order);
     }
 
-    public boolean updateOrder(WorkOrder order) throws Exception {
+    // =====================================================
+    // ИЗМЕНИТЬ ЗАКАЗ
+    // =====================================================
 
-        WorkOrder oldOrder = repository.getById(order.getId());
+    public boolean updateOrder(
+            WorkOrder order
+    ) throws Exception {
+
+        if (order == null) {
+            throw new BusinessException(
+                    "Заказ не может быть пустым."
+            );
+        }
+
+        WorkOrder oldOrder =
+                repository.getById(
+                        order.getId()
+                );
 
         if (oldOrder == null) {
             throw new EntityNotFoundException(
-                    "Заказ с ID " + order.getId() + " не найден."
+                    "Заказ с ID "
+                            + order.getId()
+                            + " не найден."
             );
         }
 
@@ -71,50 +105,106 @@ public class WorkOrderService {
         return repository.update(order);
     }
 
-    public boolean deleteOrder(int id) throws Exception {
+    // =====================================================
+    // УДАЛИТЬ ЗАКАЗ
+    // =====================================================
 
-        WorkOrder order = repository.getById(id);
+    public boolean deleteOrder(
+            int id
+    ) throws Exception {
+
+        if (id <= 0) {
+            throw new BusinessException(
+                    "ID заказа должен быть больше 0."
+            );
+        }
+
+        WorkOrder order =
+                repository.getById(id);
 
         if (order == null) {
             throw new EntityNotFoundException(
-                    "Заказ с ID " + id + " не найден."
+                    "Заказ с ID "
+                            + id
+                            + " не найден."
             );
         }
 
         return repository.delete(id);
     }
 
-    public List<WorkOrder> searchByCarBrand(String carBrand) throws Exception {
+    // =====================================================
+    // ПОИСК ПО МАРКЕ
+    // =====================================================
 
-        if (carBrand == null || carBrand.isBlank()) {
+    public List<WorkOrder> searchByCarBrand(
+            String carBrand
+    ) throws Exception {
+
+        if (carBrand == null
+                || carBrand.isBlank()) {
+
             throw new BusinessException(
                     "Марка автомобиля не может быть пустой."
             );
         }
 
-        return repository.searchByCarBrand(carBrand);
+        return repository.searchByCarBrand(
+                carBrand.trim()
+        );
     }
 
-    public List<WorkOrder> searchByCarNumber(String carNumber) throws Exception {
+    // =====================================================
+    // ПОИСК ПО ГОСНОМЕРУ
+    // =====================================================
 
-        if (carNumber == null || carNumber.isBlank()) {
+    public List<WorkOrder> searchByCarNumber(
+            String carNumber
+    ) throws Exception {
+
+        if (carNumber == null
+                || carNumber.isBlank()) {
+
             throw new BusinessException(
                     "Госномер не может быть пустым."
             );
         }
 
-        return repository.searchByCarNumber(carNumber);
+        return repository.searchByCarNumber(
+                carNumber.trim()
+        );
     }
 
-    public List<WorkOrder> filterByStatus(OrderStatus status) throws Exception {
+    // =====================================================
+    // ФИЛЬТР ПО СТАТУСУ
+    // =====================================================
 
-        return repository.getAll()
+    public List<WorkOrder> filterByStatus(
+            OrderStatus status
+    ) throws Exception {
+
+        if (status == null) {
+            throw new BusinessException(
+                    "Статус не выбран."
+            );
+        }
+
+        return repository
+                .getAll()
                 .stream()
-                .filter(order -> order.getStatus() == status)
+                .filter(order ->
+                        order.getStatus() == status
+                )
                 .toList();
     }
 
-    public List<WorkOrder> filterByClientId(int clientId) throws Exception {
+    // =====================================================
+    // ФИЛЬТР ПО КЛИЕНТУ
+    // =====================================================
+
+    public List<WorkOrder> filterByClientId(
+            int clientId
+    ) throws Exception {
 
         if (clientId <= 0) {
             throw new BusinessException(
@@ -124,58 +214,122 @@ public class WorkOrderService {
 
         if (!repository.clientExists(clientId)) {
             throw new BusinessException(
-                    "Клиент с ID " + clientId + " не существует."
+                    "Клиент с ID "
+                            + clientId
+                            + " не существует."
             );
         }
 
-        return repository.getAll()
+        return repository
+                .getAll()
                 .stream()
-                .filter(order -> order.getClientId() == clientId)
+                .filter(order ->
+                        order.getClientId()
+                                == clientId
+                )
                 .toList();
     }
 
-    public List<WorkOrder> sortByPrice() throws Exception {
+    // =====================================================
+    // СОРТИРОВКА ПО ЦЕНЕ
+    // =====================================================
 
-        return repository.getAll()
+    public List<WorkOrder> sortByPrice()
+            throws Exception {
+
+        return repository
+                .getAll()
                 .stream()
-                .sorted((order1, order2) ->
-                        order1.getPrice().compareTo(order2.getPrice()))
+                .sorted(
+                        (order1, order2) ->
+                                order1
+                                        .getPrice()
+                                        .compareTo(
+                                                order2.getPrice()
+                                        )
+                )
                 .toList();
     }
 
-    public List<WorkOrder> sortByDate() throws Exception {
+    // =====================================================
+    // СОРТИРОВКА ПО ДАТЕ
+    // =====================================================
 
-        return repository.getAll()
+    public List<WorkOrder> sortByDate()
+            throws Exception {
+
+        return repository
+                .getAll()
                 .stream()
-                .sorted((order1, order2) ->
-                        order1.getCreateDate().compareTo(order2.getCreateDate()))
+                .sorted(
+                        (order1, order2) ->
+                                order1
+                                        .getCreateDate()
+                                        .compareTo(
+                                                order2.getCreateDate()
+                                        )
+                )
                 .toList();
     }
 
-    public long getTotalOrders() throws Exception {
+    // =====================================================
+    // ОБЩЕЕ КОЛИЧЕСТВО
+    // =====================================================
 
-        return repository.getAll().size();
+    public long getTotalOrders()
+            throws Exception {
+
+        return repository
+                .getAll()
+                .size();
     }
 
-    public long countByStatus(OrderStatus status) throws Exception {
+    // =====================================================
+    // КОЛИЧЕСТВО ПО СТАТУСУ
+    // =====================================================
 
-        return repository.getAll()
+    public long countByStatus(
+            OrderStatus status
+    ) throws Exception {
+
+        return repository
+                .getAll()
                 .stream()
-                .filter(order -> order.getStatus() == status)
+                .filter(order ->
+                        order.getStatus() == status
+                )
                 .count();
     }
 
-    public BigDecimal getTotalPrice() throws Exception {
+    // =====================================================
+    // ОБЩАЯ СУММА
+    // =====================================================
 
-        return repository.getAll()
+    public BigDecimal getTotalPrice()
+            throws Exception {
+
+        return repository
+                .getAll()
                 .stream()
-                .map(WorkOrder::getPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(
+                        WorkOrder::getPrice
+                )
+                .reduce(
+                        BigDecimal.ZERO,
+                        BigDecimal::add
+                );
     }
 
-    public void exportToExcel(String fileName) throws Exception {
+    // =====================================================
+    // ЭКСПОРТ
+    // =====================================================
 
-        List<WorkOrder> orders = repository.getAll();
+    public void exportToExcel(
+            String fileName
+    ) throws Exception {
+
+        List<WorkOrder> orders =
+                repository.getAll();
 
         exporter.export(
                 orders,
@@ -183,7 +337,21 @@ public class WorkOrderService {
         );
     }
 
-    private void validateOrder(WorkOrder order) throws Exception {
+    // =====================================================
+    // ВАЛИДАЦИЯ ЗАКАЗА
+    // =====================================================
+
+    private void validateOrder(
+            WorkOrder order
+    ) throws Exception {
+
+        if (order == null) {
+            throw new BusinessException(
+                    "Заказ не может быть пустым."
+            );
+        }
+
+        // Марка автомобиля
 
         if (order.getCarBrand() == null
                 || order.getCarBrand().isBlank()) {
@@ -193,13 +361,29 @@ public class WorkOrderService {
             );
         }
 
+        if (order.getCarBrand().length() > 40) {
+            throw new BusinessException(
+                    "Марка автомобиля не должна превышать 40 символов."
+            );
+        }
+
+        // Госномер
+
         if (order.getCarNumber() == null
                 || order.getCarNumber().isBlank()) {
 
             throw new BusinessException(
-                    "Госномер автомобиля не может быть пустым."
+                    "Госномер не может быть пустым."
             );
         }
+
+        if (order.getCarNumber().length() > 10) {
+            throw new BusinessException(
+                    "Госномер не должен превышать 10 символов."
+            );
+        }
+
+        // Услуга
 
         if (order.getServiceName() == null
                 || order.getServiceName().isBlank()) {
@@ -209,37 +393,59 @@ public class WorkOrderService {
             );
         }
 
-        if (order.getPrice() == null
-                || order.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+        if (order.getServiceName().length() > 20) {
+            throw new BusinessException(
+                    "Название услуги не должно превышать 20 символов."
+            );
+        }
+
+        // Цена
+
+        if (order.getPrice() == null) {
+            throw new BusinessException(
+                    "Цена должна быть указана."
+            );
+        }
+
+        if (order.getPrice()
+                .compareTo(
+                        BigDecimal.ZERO
+                ) <= 0) {
 
             throw new BusinessException(
                     "Цена должна быть больше 0."
             );
         }
 
-        if (order.getStatus() == null) {
+        // Статус
 
+        if (order.getStatus() == null) {
             throw new BusinessException(
-                    "Статус заказа не указан."
+                    "Необходимо выбрать статус заказа."
             );
         }
+
+        // Клиент
 
         if (order.getClientId() <= 0) {
-
             throw new BusinessException(
-                    "ID клиента должен быть больше 0."
+                    "Необходимо выбрать клиента."
             );
         }
 
-        if (!repository.clientExists(order.getClientId())) {
+        if (!repository.clientExists(
+                order.getClientId()
+        )) {
 
             throw new BusinessException(
-                    "Клиент с ID "
-                            + order.getClientId()
-                            + " не существует."
+                    "Выбранный клиент не существует."
             );
         }
     }
+
+    // =====================================================
+    // ПРОВЕРКА ПЕРЕХОДА СТАТУСОВ
+    // =====================================================
 
     private void checkStatusChange(
             OrderStatus oldStatus,
@@ -255,15 +461,18 @@ public class WorkOrderService {
         }
 
         if (oldStatus == OrderStatus.CANCELLED
-                && newStatus != OrderStatus.CANCELLED) {
+                && newStatus
+                != OrderStatus.CANCELLED) {
 
             throw new BusinessException(
                     "Отмененный заказ нельзя вернуть в работу."
             );
         }
 
-        if (oldStatus == OrderStatus.IN_PROGRESS
-                && newStatus == OrderStatus.NEW) {
+        if (oldStatus
+                == OrderStatus.IN_PROGRESS
+                && newStatus
+                == OrderStatus.NEW) {
 
             throw new BusinessException(
                     "Заказ в работе нельзя вернуть в статус NEW."
